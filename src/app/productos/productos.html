@@ -1,17 +1,42 @@
 <app-cabecera></app-cabecera>
 <div class="container mt-4">
   <h1>Bienvenido a Productos</h1>
-  <div *ngIf="productos.length === 0">Cargando productos...</div>
-  <div *ngIf="productos.length > 0" class="row">
-    <div class="col-12 col-md-6 mb-3" *ngFor="let p of productos">
-      <div class="card">
+  @if (loading) {
+  <div class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2">Cargando productos...</p>
+  </div>
+  } @if (error) {
+  <div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Error</h4>
+    <p>{{ error }}</p>
+    <hr />
+    <button class="btn btn-outline-danger" (click)="retry()">Reintentar</button>
+  </div>
+  } @if (!loading && !error && productos.length === 0) {
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">Sin productos</h4>
+    <p>No hay productos disponibles en este momento.</p>
+  </div>
+  } @if (!loading && !error && productos.length > 0) {
+  <div class="row">
+    @for (p of productos; track p.id) {
+    <div class="col-12 col-md-6 mb-3">
+      <div class="card h-100">
         <div class="card-body">
           <h5 class="card-title">{{ p.nombre || 'Producto ' + p.id }}</h5>
-          <p class="card-text">{{ p.descripcion || '-' }}</p>
-          <p class="card-text"><strong>Precio:</strong> {{ p.precio || '-' }}</p>
+          <p class="card-text">{{ p.descripcion || 'Sin descripción disponible' }}</p>
+          <p class="card-text">
+            <strong>Precio:</strong>
+            <span class="text-success fw-bold">${{ p.precio || 0 | number : '1.2-2' }}</span>
+          </p>
         </div>
       </div>
     </div>
+    }
   </div>
+  }
 </div>
 <app-pie></app-pie>

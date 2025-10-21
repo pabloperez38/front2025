@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
@@ -9,17 +9,58 @@ import { AuthService } from '../services/auth';
   imports: [FormsModule, RouterModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login {
-  constructor(private auth: AuthService, private router: Router) {}
+  loading = false;
+  error: string | null = null;
+
+  constructor(private auth: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
 
   login(form: NgForm) {
-    const email = form.value.email;
-    const password = form.value.password;
+    // Marcar el formulario como enviado para mostrar validaciones
+    form.form.markAllAsTouched();
+
+    if (!form.valid) {
+      this.error = 'Por favor, completa todos los campos correctamente.';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.loading = true;
+    this.error = null;
+    this.cdr.markForCheck();
+
+    const { email, password } = form.value;
 
     this.auth.login(email, password).subscribe({
-      next: () => this.router.navigate(['/home']),
-      error: () => alert('Usuario o contraseña incorrectos'),
+      next: () => {
+        this.loading = false;
+        this.cdr.markForCheck();
+        this.router.navigate(['/home']);
+      },
+      error: (error) => {
+        this.loading = false;
+
+        // Mensajes de error más específicos
+        if (error.status === 401) {
+          this.error = 'Credenciales incorrectas. Verifique su email y contraseña.';
+        } else if (error.status === 0) {
+          this.error = 'Error de conexión. Verifique su conexión a internet.';
+        } else if (error.status >= 500) {
+          this.error = 'Error del servidor. Inténtelo más tarde.';
+        } else {
+          this.error = 'Error inesperado. Inténtelo de nuevo.';
+        }
+
+        this.cdr.markForCheck();
+        console.error('Login error:', error);
+      },
     });
+  }
+
+  clearError() {
+    this.error = null;
+    this.cdr.markForCheck();
   }
 }

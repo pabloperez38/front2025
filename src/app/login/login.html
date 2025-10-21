@@ -1,16 +1,75 @@
 <div class="container d-flex justify-content-center align-items-center my-5">
-  <div class="card p-4 shadow-sm" style="width: 25rem;">
+  <div class="card p-4 shadow-sm" style="width: 25rem">
     <h3 class="text-center mb-4">Iniciar sesión</h3>
-    <form #f="ngForm" (ngSubmit)="f.form.valid && login(f)">
+
+    <!-- Mensaje de error general -->
+    @if (error) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ error }}
+      <button type="button" class="btn-close" (click)="clearError()" aria-label="Close"></button>
+    </div>
+    }
+
+    <form #f="ngForm" (ngSubmit)="login(f)">
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese email" ngModel required />
+        <input
+          type="email"
+          class="form-control"
+          [class.is-invalid]="f.submitted && f.form.controls['email']?.invalid"
+          id="email"
+          name="email"
+          placeholder="Ingrese email"
+          ngModel
+          required
+          email
+        />
+        @if (f.submitted && f.form.controls['email']?.invalid) {
+        <div class="invalid-feedback">
+          @if (f.form.controls['email']?.errors?.['required']) { El email es obligatorio } @else if
+          (f.form.controls['email']?.errors?.['email']) { Ingrese un email válido }
+        </div>
+        }
       </div>
+
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Ingrese contraseña" ngModel required />
+        <label for="password" class="form-label">Contraseña</label>
+        <input
+          type="password"
+          class="form-control"
+          [class.is-invalid]="f.submitted && f.form.controls['password']?.invalid"
+          id="password"
+          name="password"
+          placeholder="Ingrese contraseña"
+          ngModel
+          required
+          minlength="6"
+        />
+        @if (f.submitted && f.form.controls['password']?.invalid) {
+        <div class="invalid-feedback">
+          @if (f.form.controls['password']?.errors?.['required']) { La contraseña es obligatoria }
+          @else if (f.form.controls['password']?.errors?.['minlength']) { La contraseña debe tener
+          al menos 6 caracteres }
+        </div>
+        }
       </div>
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+        @if (loading) {
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Iniciando sesión... } @else {
+        <i class="bi bi-box-arrow-in-right me-2"></i>
+        Iniciar sesión }
+      </button>
     </form>
+
+    <!-- Mensaje de ayuda -->
+    <div class="text-center mt-3">
+      <small class="text-muted">
+        <i class="bi bi-info-circle me-1"></i>
+        Ingrese sus credenciales para acceder al sistema
+      </small>
+    </div>
   </div>
 </div>

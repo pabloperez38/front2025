@@ -4,10 +4,23 @@ import { Observable } from 'rxjs';
 
 export interface Producto {
   id: number;
-  nombre?: string;
-  descripcion?: string;
-  precio?: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  categoria?: string;
+  stock?: number;
+  imagen?: string;
+  fechaCreacion?: string;
+  fechaActualizacion?: string;
 }
+
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
+}
+
+export interface ProductosResponse extends ApiResponse<Producto[]> {}
 
 @Injectable({ providedIn: 'root' })
 export class ProductosService {
@@ -15,7 +28,6 @@ export class ProductosService {
 
   constructor(private http: HttpClient) {}
 
-  // Assumption: endpoint is /productos — change if your API uses /products
   getAll(): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${this.apiUrl}/productos`);
   }

@@ -21,8 +21,7 @@ export class AuthService {
             (res as any)?.token ??
             (res as any)?.accessToken ??
             (res as any)?.data?.access_token;
-          if (raw) {
-            // sanitize token: remove surrounding quotes and any leading 'Bearer ' prefix
+          if (raw) {          
             const token = String(raw)
               .replace(/^\"|\"$/g, '')
               .replace(/^Bearer\s+/i, '')
@@ -40,7 +39,6 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  // keep a callable API for checking in templates and guards
   public isLogged(): boolean {
     return this.isLoggedIn();
   }
