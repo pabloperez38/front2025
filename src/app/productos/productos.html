@@ -1,0 +1,17 @@
+<app-cabecera></app-cabecera>
+<div class="container mt-4">
+  <h1>Bienvenido a Productos</h1>
+  <div *ngIf="productos.length === 0">Cargando productos...</div>
+  <div *ngIf="productos.length > 0" class="row">
+    <div class="col-12 col-md-6 mb-3" *ngFor="let p of productos">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ p.nombre || 'Producto ' + p.id }}</h5>
+          <p class="card-text">{{ p.descripcion || '-' }}</p>
+          <p class="card-text"><strong>Precio:</strong> {{ p.precio || '-' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-pie></app-pie>
