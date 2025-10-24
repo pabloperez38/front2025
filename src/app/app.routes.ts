@@ -4,10 +4,12 @@ import { Home } from './home/home';
 import { AuthGuard } from './services/auth.guard';
 import { Landing } from './landing/landing';
 import { Productos } from './productos/productos';
+import { TestCategorias } from './test-categorias/test-categorias';
 
 export const routes: Routes = [
   { path: '', component: Landing },
   { path: 'login', component: Login },
   { path: 'home', component: Home, canActivate: [AuthGuard] },
   { path: 'productos', component: Productos, canActivate: [AuthGuard] },
+  { path: 'test-categorias', component: TestCategorias, canActivate: [AuthGuard] },
 ];

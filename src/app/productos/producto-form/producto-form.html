@@ -1,0 +1,204 @@
+<div class="producto-form-container">
+  <div class="card">
+    <div class="card-header">
+      <h4 class="mb-0">
+        {{ isEditing ? 'Editar Producto' : 'Crear Nuevo Producto' }}
+      </h4>
+    </div>
+    <div class="card-body">
+      @if (error) {
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+      }
+
+      <form [formGroup]="productoForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <!-- Nombre -->
+          <div class="col-md-6 mb-3">
+            <label for="nombre" class="form-label">Nombre *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nombre"
+              formControlName="nombre"
+              [class.is-invalid]="
+                productoForm.get('nombre')?.invalid && productoForm.get('nombre')?.touched
+              "
+              placeholder="Ingrese el nombre del producto"
+            />
+            @if (getFieldError('nombre')) {
+            <div class="invalid-feedback">
+              {{ getFieldError('nombre') }}
+            </div>
+            }
+          </div>
+
+          <!-- Categoría -->
+          <div class="col-md-6 mb-3">
+            <label for="categoria" class="form-label">Categoría</label>
+            <select
+              class="form-select"
+              id="categoria"
+              formControlName="categoria_id"
+              [class.is-invalid]="
+                productoForm.get('categoria_id')?.invalid &&
+                productoForm.get('categoria_id')?.touched
+              "
+            >
+              <option value="">Seleccione una categoría (opcional)</option>
+              @for (categoria of categorias; track categoria.id) {
+              <option [value]="categoria.id">{{ categoria.nombre }}</option>
+              }
+            </select>
+            @if (categorias.length === 0) {
+            <div class="form-text text-warning">
+              <i class="fas fa-exclamation-triangle me-1"></i>
+              No se pudieron cargar las categorías. Puede crear el producto sin categoría.
+            </div>
+            } @if (getFieldError('categoria')) {
+            <div class="invalid-feedback">
+              {{ getFieldError('categoria') }}
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-3">
+          <label for="descripcion" class="form-label">Descripción *</label>
+          <textarea
+            class="form-control"
+            id="descripcion"
+            formControlName="descripcion"
+            [class.is-invalid]="
+              productoForm.get('descripcion')?.invalid && productoForm.get('descripcion')?.touched
+            "
+            rows="3"
+            placeholder="Ingrese una descripción detallada del producto"
+          ></textarea>
+          @if (getFieldError('descripcion')) {
+          <div class="invalid-feedback">
+            {{ getFieldError('descripcion') }}
+          </div>
+          }
+        </div>
+
+        <div class="row">
+          <!-- Stock -->
+          <div class="col-md-3 mb-3">
+            <label for="stock" class="form-label">Stock *</label>
+            <input
+              type="number"
+              class="form-control"
+              id="stock"
+              formControlName="stock"
+              [class.is-invalid]="
+                productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched
+              "
+              min="0"
+              placeholder="0"
+            />
+            @if (getFieldError('stock')) {
+            <div class="invalid-feedback">
+              {{ getFieldError('stock') }}
+            </div>
+            }
+          </div>
+
+          <!-- Precio -->
+          <div class="col-md-3 mb-3">
+            <label for="precio" class="form-label">Precio *</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input
+                type="number"
+                class="form-control"
+                id="precio"
+                formControlName="precio"
+                [class.is-invalid]="
+                  productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched
+                "
+                min="0.01"
+                step="0.01"
+                placeholder="0.00"
+              />
+            </div>
+            @if (getFieldError('precio')) {
+            <div class="invalid-feedback">
+              {{ getFieldError('precio') }}
+            </div>
+            }
+          </div>
+
+          <!-- Peso -->
+          <div class="col-md-3 mb-3">
+            <label for="peso" class="form-label">Peso *</label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                id="peso"
+                formControlName="peso"
+                [class.is-invalid]="
+                  productoForm.get('peso')?.invalid && productoForm.get('peso')?.touched
+                "
+                min="0.01"
+                step="0.01"
+                placeholder="0.00"
+              />
+              <span class="input-group-text">kg</span>
+            </div>
+            @if (getFieldError('peso')) {
+            <div class="invalid-feedback">
+              {{ getFieldError('peso') }}
+            </div>
+            }
+          </div>
+
+          <!-- Disponible -->
+          <div class="col-md-3 mb-3">
+            <label for="disponible" class="form-label">Estado *</label>
+            <select
+              class="form-select"
+              id="disponible"
+              formControlName="disponible"
+              [class.is-invalid]="
+                productoForm.get('disponible')?.invalid && productoForm.get('disponible')?.touched
+              "
+            >
+              <option [value]="1">Disponible</option>
+              <option [value]="0">No Disponible</option>
+            </select>
+            @if (getFieldError('disponible')) {
+            <div class="invalid-feedback">
+              {{ getFieldError('disponible') }}
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="loading">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="productoForm.invalid || loading"
+          >
+            @if (loading) {
+            <span
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            }
+            {{ isEditing ? 'Actualizar' : 'Crear' }} Producto
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
